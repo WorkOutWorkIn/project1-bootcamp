@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@emotion/react";
 import {
   TableContainer,
   TextField,
@@ -11,8 +10,8 @@ import {
   Paper,
 } from "@mui/material";
 import { Container } from "@mui/system";
-
 import React from "react";
+import WatchListTable from "../WatchListTable";
 
 export default class CoinTable extends React.Component {
   constructor(props) {
@@ -21,7 +20,9 @@ export default class CoinTable extends React.Component {
     this.state = {
       coins: [],
       search: "",
+      watchlist: [],
     };
+    this.deleteWatchListSubmit = this.deleteWatchListSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -37,35 +38,93 @@ export default class CoinTable extends React.Component {
             name: info.name,
             image: info.image,
             currentPrice: info.current_price,
-            PriceChange: info.price_change_percentage_24h,
+            priceChange: info.price_change_percentage_24h,
             marketCap: info.market_cap,
-            Symbol: info.symbol,
+            symbol: info.symbol,
           };
           return coinData_all;
         });
-        this.setState({ coins: coinData });
+        let data = [];
+        // localStorage.getItem("current-watchlist") === undefined
+        //   ? JSON.parse(localStorage.getItem("current-watchlist"))
+        //   : [];
+        if (localStorage.getItem("current-watchlist") == null || undefined) {
+          data = [];
+          console.log(`no data`);
+        } else {
+          console.log(`output data`);
+
+          data = JSON.parse(localStorage.getItem("current-watchlist"));
+          console.log(data);
+        }
+        this.setState({ coins: coinData, watchlist: data });
       });
   }
 
-  handleSearch = () => {
-    return this.state.coins.filter(
-      (coin) =>
-        coin.coin.toLowerCase().includes(this.state.search) ||
-        coin.symbol.toLowerCase().includes(this.state.search)
-    );
+  // componentdidmount
+  // check local storage for watchlist and if it exist
+  // take data and setstate in the component
+  // JSON.strinifgy to local storage
+  // .parse to use the data
+
+  // add in componentdidupdate, if the prevstate.watchlist != state.watchlist
+  // storeitem watchlist into local storage
+
+  //updates when object in the watchlist array is taken in or out
+
+  componentDidUpdate(prevstate) {
+    if (prevstate.watchlist !== this.state.watchlist) {
+      if (this.state.watchlist.length === 0) {
+        console.log(`empty`);
+      } else {
+        localStorage.setItem(
+          "current-watchlist",
+          JSON.stringify(this.state.watchlist)
+        );
+      }
+    }
+    console.log(JSON.stringify(this.state.watchlist));
+  }
+
+  // handleSearch = () => {
+  //   return this.state.coins.filter(
+  //     (coin) =>
+  //       coin.coin.toLowerCase().includes(this.state.search) ||
+  //       coin.symbol.toLowerCase().includes(this.state.search)
+  //   );
+  // };
+
+  // button func to add coin data to watchlist array
+  addWatchListSubmit = (coins) => {
+    // console.log(coins);
+    this.setState({
+      watchlist: [...this.state.watchlist, coins],
+    });
   };
 
+  // Add delete watchlist too.
+  deleteWatchListSubmit = (coins) => {
+    this.setState({
+      watchlist: this.state.watchlist.filter(
+        (coin) => coins.name !== coin.name
+      ),
+    });
+  };
+  //
   render() {
     console.log(this.state.search);
+    console.log(this.state.watchlist);
+
     return (
       <div>
-        <Container>
-          <Typography variant="h4" style={{ margin: 18 }}>
+        <Container style={{ textAlign: "center" }}>
+          <Typography variant="h5" style={{ margin: 18, color: "white" }}>
             Cryptocurrency Prices by Market Cap
           </Typography>
           <TextField
             label="search"
             variant="outlined"
+            color="primary"
             onChange={(e) => this.setState({ search: e.target.value })}
           />
         </Container>
@@ -82,8 +141,10 @@ export default class CoinTable extends React.Component {
             </TableHead>
             <TableBody>
               {this.state.coins
-                .filter((coin) =>
-                  coin.name.toLowerCase().includes(this.state.search)
+                .filter(
+                  (coin) =>
+                    coin.name.toLowerCase().includes(this.state.search) ||
+                    coin.symbol.toLowerCase().includes(this.state.search)
                 )
                 .map((row) => (
                   <TableRow
@@ -91,29 +152,30 @@ export default class CoinTable extends React.Component {
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell style={{ display: "flex", gap: 15 }}>
-                      {row.name}
-                      <div>{row.image}</div>
+                      <img src={row.image} alt={row.coin} height="50" />
+                      <div>{row.name}</div>
+                      <div>{row.symbol}</div>
+                      <div>
+                        <button onClick={() => this.addWatchListSubmit(row)}>
+                          Add to WatchList
+                        </button>
+                      </div>
                     </TableCell>
                     <TableCell align="right">{row.currentPrice}</TableCell>
-                    <TableCell align="right">{row.PriceChange}</TableCell>
+                    <TableCell align="right">{row.priceChange}</TableCell>
                     <TableCell align="right">{row.marketCap}</TableCell>
                   </TableRow>
                 ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <div>
+          <WatchListTable
+            watchList={this.state.watchlist}
+            removeWatchList={this.deleteWatchListSubmit}
+          />
+        </div>
       </div>
     );
   }
-}
-
-{
-  /* conditional is use as the array is loading in */
-}
-{
-  /* {this.state.coins && this.state.coins.length > 0
-          ? this.state.coins.map((coins) => (
-              <div key={coins.coin}>{coins.coin}</div>
-            ))
-          : `not rendered`} */
 }
