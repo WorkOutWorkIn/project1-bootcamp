@@ -1,10 +1,11 @@
 .App {
-  background-color: #282c34;
+  background-color: #14161a;
   min-height: 100vh;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
+  color: "white";
 }
 
 .App-logo {

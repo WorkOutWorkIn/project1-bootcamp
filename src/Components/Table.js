@@ -12,6 +12,7 @@ import {
 import { Container } from "@mui/system";
 import React from "react";
 import WatchListTable from "../WatchListTable";
+import { ThemeProvider, createTheme } from "@mui/material";
 
 export default class CoinTable extends React.Component {
   constructor(props) {
@@ -103,78 +104,133 @@ export default class CoinTable extends React.Component {
   };
 
   // Add delete watchlist too.
+  // delete from local storage too
   deleteWatchListSubmit = (coins) => {
     this.setState({
       watchlist: this.state.watchlist.filter(
         (coin) => coins.name !== coin.name
       ),
     });
+    let store = this.state.watchlist.filter((coin) => coins.name !== coin.name);
+    console.log(store);
+    localStorage.setItem("current-watchlist", JSON.stringify(store));
   };
+
   //
   render() {
     console.log(this.state.search);
     console.log(this.state.watchlist);
 
+    const theme = createTheme({
+      palette: {
+        primary: {
+          main: "#fff",
+        },
+        // secondary: {
+        //   main: blueGrey[900],
+        // },
+        type: "dark",
+      },
+    });
+
     return (
       <div>
-        <Container style={{ textAlign: "center" }}>
-          <Typography variant="h5" style={{ margin: 18, color: "white" }}>
-            Cryptocurrency Prices by Market Cap
-          </Typography>
-          <TextField
-            label="search"
-            variant="outlined"
-            color="primary"
-            onChange={(e) => this.setState({ search: e.target.value })}
-          />
-        </Container>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {["Coin", "Price", "24h Change", "Market Cap"].map((head) => (
-                  <TableCell key={head} align={head === "Coin" ? "" : "right"}>
-                    {head}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {this.state.coins
-                .filter(
-                  (coin) =>
-                    coin.name.toLowerCase().includes(this.state.search) ||
-                    coin.symbol.toLowerCase().includes(this.state.search)
-                )
-                .map((row) => (
-                  <TableRow
-                    key={row.name}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell style={{ display: "flex", gap: 15 }}>
-                      <img src={row.image} alt={row.coin} height="50" />
-                      <div>{row.name}</div>
-                      <div>{row.symbol}</div>
-                      <div>
-                        <button onClick={() => this.addWatchListSubmit(row)}>
-                          Add to WatchList
-                        </button>
-                      </div>
-                    </TableCell>
-                    <TableCell align="right">{row.currentPrice}</TableCell>
-                    <TableCell align="right">{row.priceChange}</TableCell>
-                    <TableCell align="right">{row.marketCap}</TableCell>
+        <ThemeProvider theme={theme}>
+          <Container style={{ textAlign: "center" }}>
+            <Typography variant="h2" style={{ margin: 18, color: "white" }}>
+              Cryptocurrency Tracker
+            </Typography>
+          </Container>
+          <Container style={{ textAlign: "center" }}>
+            <Typography variant="h5" style={{ margin: 18, color: "white" }}>
+              Cryptocurrency Prices by Market Cap
+            </Typography>
+
+            <TextField
+              label="Search by coin/symbol"
+              variant="standard"
+              style={{ marginBottom: 20, width: "100%" }}
+              onChange={(e) => this.setState({ search: e.target.value })}
+              sx={{
+                label: { color: "white" },
+                input: {
+                  border: "white 0.5px solid",
+                  padding: 2,
+                  color: "white",
+                },
+              }}
+            />
+          </Container>
+          <Container>
+            <TableContainer component={Paper} color="primary">
+              <Table>
+                <TableHead>
+                  <TableRow style={{ backgroundColor: "#1617a" }}>
+                    {["Coin", "Price", "24h Change", "Market Cap"].map(
+                      (head) => (
+                        <TableCell
+                          key={head}
+                          align={head === "Coin" ? "" : "right"}
+                        >
+                          {head}
+                        </TableCell>
+                      )
+                    )}
                   </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <div>
-          <WatchListTable
-            watchList={this.state.watchlist}
-            removeWatchList={this.deleteWatchListSubmit}
-          />
-        </div>
+                </TableHead>
+                <TableBody>
+                  {this.state.coins
+                    .filter(
+                      (coin) =>
+                        coin.name.toLowerCase().includes(this.state.search) ||
+                        coin.symbol.toLowerCase().includes(this.state.search)
+                    )
+                    .map((row) => (
+                      <TableRow
+                        key={row.name}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell style={{ display: "flex", gap: 15 }}>
+                          <img src={row.image} alt={row.coin} height="50" />
+
+                          <div>{row.name}</div>
+                          <div>{row.symbol}</div>
+                          <div>
+                            <button
+                              onClick={() => this.addWatchListSubmit(row)}
+                            >
+                              Add to WatchList
+                            </button>
+                          </div>
+                        </TableCell>
+                        <TableCell align="right">{row.currentPrice}</TableCell>
+                        <TableCell
+                          align="right"
+                          style={{
+                            color: row.priceChange > 0 ? "green" : "red",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {row.priceChange}%
+                        </TableCell>
+                        <TableCell align="right">
+                          {row.marketCap.toString().slice(0, -9)} Billions
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Container>
+          <div>
+            <WatchListTable
+              watchList={this.state.watchlist}
+              removeWatchList={this.deleteWatchListSubmit}
+            />
+          </div>
+        </ThemeProvider>
       </div>
     );
   }
