@@ -87,14 +87,6 @@ export default class CoinTable extends React.Component {
     console.log(JSON.stringify(this.state.watchlist));
   }
 
-  // handleSearch = () => {
-  //   return this.state.coins.filter(
-  //     (coin) =>
-  //       coin.coin.toLowerCase().includes(this.state.search) ||
-  //       coin.symbol.toLowerCase().includes(this.state.search)
-  //   );
-  // };
-
   // button func to add coin data to watchlist array
   addWatchListSubmit = (coins) => {
     // console.log(coins);
@@ -126,9 +118,7 @@ export default class CoinTable extends React.Component {
         primary: {
           main: "#fff",
         },
-        // secondary: {
-        //   main: blueGrey[900],
-        // },
+
         type: "dark",
       },
     });
@@ -165,7 +155,7 @@ export default class CoinTable extends React.Component {
             <TableContainer component={Paper} color="primary">
               <Table>
                 <TableHead>
-                  <TableRow style={{ backgroundColor: "#1617a" }}>
+                  <TableRow>
                     {["Coin", "Price", "24h Change", "Market Cap"].map(
                       (head) => (
                         <TableCell
@@ -195,8 +185,21 @@ export default class CoinTable extends React.Component {
                         <TableCell style={{ display: "flex", gap: 15 }}>
                           <img src={row.image} alt={row.coin} height="50" />
 
-                          <div>{row.name}</div>
-                          <div>{row.symbol}</div>
+                          <div
+                            style={{ display: "flex", flexDirection: "column" }}
+                          >
+                            <span
+                              style={{
+                                textTransform: "uppercase",
+                                fontSize: 12,
+                              }}
+                            >
+                              {row.name}
+                            </span>
+                            <span style={{ color: "darkgrey" }}>
+                              {row.symbol}
+                            </span>
+                          </div>
                           <div>
                             <button
                               onClick={() => this.addWatchListSubmit(row)}

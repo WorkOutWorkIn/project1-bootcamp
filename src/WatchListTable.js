@@ -65,8 +65,24 @@ export default class WatchListTable extends React.Component {
                         >
                           <TableCell style={{ display: "flex", gap: 15 }}>
                             <img src={row.image} alt={row.coin} height="50" />
-                            <div>{row.name}</div>
-                            <div>{row.symbol}</div>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  textTransform: "uppercase",
+                                  fontSize: 12,
+                                }}
+                              >
+                                {row.name}
+                              </span>
+                              <span style={{ color: "darkgrey" }}>
+                                {row.symbol}
+                              </span>
+                            </div>
                             <div>
                               <button
                                 onClick={() => this.props.removeWatchList(row)}
