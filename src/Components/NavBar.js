@@ -10,7 +10,7 @@ export default class Nav extends React.Component {
             <Typography
               style={{ color: "white", fontWeight: "bold", flexGrow: 1 }}
             >
-              Coin Tracker
+              Cryptocurrency Tracker
             </Typography>
             <Typography style={{ color: "white", flexGrow: 0.1 }}>
               Charts
