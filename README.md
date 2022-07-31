@@ -14,6 +14,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
+## Problem Solving
+
 What problem are you solving?
 Users needing informations for their investment plan.
 
@@ -25,7 +27,12 @@ Users consist of retail investors who can access the information on their phones
 
 ## UX Wireframes
 
-Technologies
+https://www.figma.com/file/iBP0lSZCrgsLc4Hkkv7kb2/Webpage-Wireframing?node-id=0%3A1
+
+## KanBan Board
+
+https://trello.com/b/kfqwlud9
+
+## Technologies
 
 1. React
-2. deployment tool xx
